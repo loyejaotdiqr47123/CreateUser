@@ -63,7 +63,7 @@ func NetLocalGroupAddMembers(serverName *uint16, groupName *uint16, level uint32
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Println("Usage: program.exe username password")
+		fmt.Println("用法: CreateUser.exe 用户名 密码")
 		return
 	}
 
@@ -79,7 +79,7 @@ func main() {
 
 	ret := NetUserAdd(nil, 1, (*byte)(unsafe.Pointer(&ui1)), nil)
 	if ret != ERROR_SUCCESS {
-		fmt.Println("Error creating user:", ret)
+		fmt.Println("添加用户错误:", ret)
 		return
 	}
 
@@ -89,9 +89,9 @@ func main() {
 
 	ret = NetLocalGroupAddMembers(nil, groupName, 3, (*byte)(unsafe.Pointer(buf)), 1)
 	if ret != ERROR_SUCCESS && ret != NERR_GroupNotFound {
-		fmt.Println("Error adding user to group:", ret)
+		fmt.Println("添加用户到组失败:", ret)
 		return
 	}
 
-	fmt.Println("User created and added to 'Users' group successfully.")
+	fmt.Println("添加用户和组成功.")
 }

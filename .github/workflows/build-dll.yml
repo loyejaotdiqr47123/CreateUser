@@ -15,8 +15,9 @@ jobs:
 
     - name: Install Windows SDK
       run: |
-        # Install Windows SDK
-        choco install windows-sdk-10-version-10.0.19041.0 -y
+        # Download and install Windows SDK
+        Invoke-WebRequest -Uri https://download.microsoft.com/download/4/2/2/422459C6-FA28-4DAD-8604-1A2005A67827/winsdksetup.exe -OutFile winsdksetup.exe
+        Start-Process -Wait -FilePath .\winsdksetup.exe -ArgumentList /q /norestart
 
     - name: Set up environment variables
       run: |

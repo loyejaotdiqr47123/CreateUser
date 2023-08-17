@@ -35,7 +35,7 @@ type USER_INFO_1 struct {
 }
 
 type LOCALGROUP_MEMBERS_INFO_3 struct {
-	lgrmi3_domainandname uintptr
+	lgrmi3_domainandname *uint16
 }
 
 func NetUserAdd(serverName *uint16, level uint32, buf *byte, parmErr *uint32) (netapiStatus uint32) {
@@ -77,27 +77,17 @@ func main() {
 		Flags:    UF_SCRIPT | UF_PASSWD_NOTREQD,
 	}
 
-	buf, err := syscall.Marshal(&ui1)
-	if err != nil {
-		fmt.Println("Error marshaling user info:", err)
-		return
-	}
-
-	ret := NetUserAdd(nil, 1, &buf[0], nil)
+	ret := NetUserAdd(nil, 1, (*byte)(unsafe.Pointer(&ui1)), nil)
 	if ret != ERROR_SUCCESS {
 		fmt.Println("Error creating user:", ret)
 		return
 	}
 
 	groupName := syscall.StringToUTF16Ptr("Users")
-	memberInfo := LOCALGROUP_MEMBERS_INFO_3{lgrmi3_domainandname: uintptr(unsafe.Pointer(username))}
-	buf, err = syscall.Marshal(&memberInfo)
-	if err != nil {
-		fmt.Println("Error marshaling group member info:", err)
-		return
-	}
+	memberInfo := LOCALGROUP_MEMBERS_INFO_3{lgrmi3_domainandname: username}
+	buf := &memberInfo
 
-	ret = NetLocalGroupAddMembers(nil, groupName, 3, &buf[0], 1)
+	ret = NetLocalGroupAddMembers(nil, groupName, 3, (*byte)(unsafe.Pointer(buf)), 1)
 	if ret != ERROR_SUCCESS && ret != NERR_GroupNotFound {
 		fmt.Println("Error adding user to group:", ret)
 		return

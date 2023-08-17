@@ -27,7 +27,7 @@ jobs:
     - name: Build DLL
       run: |
         cd build
-        cl.exe /LD CreateUserDLL.cpp /link /OUT:CreateUserDLL.dll netapi32.lib
+        cmd cl.exe /LD CreateUserDLL.cpp /link /OUT:CreateUserDLL.dll netapi32.lib
 
     - name: Upload DLL artifact
       uses: actions/upload-artifact@v2

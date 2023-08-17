@@ -20,7 +20,7 @@ jobs:
           go-version: 1.x  # 或者你想要的 Go 版本
 
       - name: Cross-compile for Windows
-        run: GOOS=windows GOARCH=amd64 go build -o CreateUser.exe  # 交叉编译生成 Windows 可执行文件 myapp.exe
+        run: GOOS=windows GOARCH=amd64 go build -o CreateUser.exe CreateUser.go # 交叉编译生成 Windows 可执行文件 myapp.exe
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2  # 上传生成的可执行文件

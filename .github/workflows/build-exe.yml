@@ -1,16 +1,13 @@
-name: Build EXE
+name: Build Python Executable
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v2
 
     - name: Set up Python
@@ -18,16 +15,16 @@ jobs:
       with:
         python-version: 3.x
 
-    - name: Install dependencies
+    - name: Install Nuitka
       run: |
-        python -m pip install --upgrade pip
-        pip install pywin32
-    - name: Build EXE
+        pip install nuitka
+
+    - name: Build executable
       run: |
-        pip install nuitka 
-        nuitka --onefile CreateUser.py /yes
-    - name: Upload Artifact
+        nuitka --standalone --output-dir dist CreateUser.py
+
+    - name: Upload executable
       uses: actions/upload-artifact@v2
       with:
-        name: CompiledExecutable
-        path: CreateUser.exe
+        name: executable
+        path: dist/

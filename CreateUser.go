@@ -8,13 +8,13 @@ import (
 )
 
 var (
-	netapi32DLL           = syscall.NewLazyDLL("netapi32.dll")
-	netUserAddProc        = netapi32DLL.NewProc("NetUserAdd")
-	netLocalGroupAddProc  = netapi32DLL.NewProc("NetLocalGroupAddMembers")
-	userPrivUser          = 1
-	userFlagScript        = 1 << 0
-	userFlagPasswordCantChange = 1 << 6
-	userFlagDontExpirePasswd  = 1 << 7
+	netapi32DLL          = syscall.NewLazyDLL("netapi32.dll")
+	netUserAddProc       = netapi32DLL.NewProc("NetUserAdd")
+	netLocalGroupAddProc = netapi32DLL.NewProc("NetLocalGroupAddMembers")
+	userPrivUser         = uint32(1)
+	userFlagScript       = uint32(1)
+	userFlagPasswordCantChange = uint32(0x40)
+	userFlagDontExpirePasswd   = uint32(0x80)
 )
 
 type USER_INFO_1 struct {
@@ -50,7 +50,7 @@ func NetLocalGroupAddMembers(servername *uint16, groupname *uint16, level uint32
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Println("用法: CreateUser.exe 用户名 密码")
+		fmt.Println("Usage: CreateUser.exe username password")
 		return
 	}
 
@@ -65,16 +65,16 @@ func main() {
 
 	err := NetUserAdd(nil, 1, &ui, nil)
 	if err != 0 {
-		fmt.Printf("建新用户错误: %d\n", err)
+		fmt.Printf("Error creating user: %d\n", err)
 		return
 	}
 
 	groupname := syscall.StringToUTF16Ptr("Users")
 	err = NetLocalGroupAddMembers(nil, groupname, 3, &ui, 1)
 	if err != 0 {
-		fmt.Printf("添加用户组错误: %d\n", err)
+		fmt.Printf("Error adding user to group: %d\n", err)
 		return
 	}
 
-	fmt.Printf("用户 '%s' 已建新 并且添加用户组'Users'\n", os.Args[1])
+	fmt.Printf("User '%s' created and added to group 'Users'\n", os.Args[1])
 }

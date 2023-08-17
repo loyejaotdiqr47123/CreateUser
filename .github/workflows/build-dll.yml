@@ -3,24 +3,24 @@ name: Build DLL
 on:
   push:
     branches:
-      - main  # 或者您想要触发工作流的分支
+      - main
 
 jobs:
   build:
     runs-on: windows-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      
+
     - name: Set up MSVC environment
       uses: microsoft/setup-msbuild@v1
-      
+
     - name: Build DLL
       run: |
         cd build
-        g++ -shared -o CreateUserDLL.dll -Wl,--out-implib,libCreateUserDLL.a CreateUserDLL.cpp -static-libgcc -static-libstdc++ -lnetapi32
-      
+        cl /LD CreateUserDLL.cpp /link /OUT:CreateUserDLL.dll netapi32.lib
+
     - name: Upload DLL artifact
       uses: actions/upload-artifact@v2
       with:

@@ -17,7 +17,7 @@ jobs:
       run: |
         # Download and install Windows SDK
         Invoke-WebRequest -Uri https://go.microsoft.com/fwlink/p/?linkid=2120843 -OutFile winsdksetup.exe
-        Start-Process -Wait -FilePath .\winsdksetup.exe -ArgumentList /q /norestart
+        Start-Process -Wait -FilePath .\winsdksetup.exe -ArgumentList '/quiet /norestart'
 
     - name: Set up environment variables
       run: |

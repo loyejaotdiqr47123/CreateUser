@@ -13,20 +13,20 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install MinGW
+    - name: Install MinGW-w64
       run: |
-        # Download and install MinGW
-        choco install mingw -y
+        # Download and install MinGW-w64
+        choco install mingw-w64 -y
 
     - name: Set up environment variables
       run: |
-        # Set up environment variables for MinGW
-        echo "##vso[task.prependpath]C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin"
+        # Set up environment variables for MinGW-w64
+        echo "##vso[task.prependpath]C:\ProgramData\chocolatey\lib\mingw-w64\tools\install\mingw64\bin"
 
     - name: Build DLL
       run: |
         cd build
-        g++ -shared -o CreateUserDLL.dll CreateUserDLL.cpp -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt" -lnetapi32
+        g++ -shared -o CreateUserDLL.dll CreateUserDLL.cpp -lnetapi32
 
     - name: Upload DLL artifact
       uses: actions/upload-artifact@v2

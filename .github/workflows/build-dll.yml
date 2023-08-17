@@ -3,7 +3,7 @@ name: Build DLL
 on:
   push:
     branches:
-      - main
+      - main  # 或者您想要触发工作流的分支
 
 jobs:
   build:
@@ -13,18 +13,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up MSVC environment
-      uses: actions/setup-msbuild@v1
+    - name: Install Visual Studio Build Tools
+      uses: microsoft/setup-msbuild@v1
       with:
-        vs-version: 'latest' # 使用最新版本的 Visual Studio
+        vs-version: latest  # 使用最新版本的 Visual Studio
 
     - name: Build DLL
       run: |
         cd build
-        msbuild CreateUserDLL.cpp /p:Configuration=Release
+        cl /LD CreateUserDLL.cpp /link /OUT:CreateUserDLL.dll netapi32.lib
 
     - name: Upload DLL artifact
       uses: actions/upload-artifact@v2
       with:
         name: CreateUserDLL
-        path: build/Release/CreateUserDLL.dll
+        path: build/CreateUserDLL.dll

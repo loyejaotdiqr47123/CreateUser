@@ -18,4 +18,8 @@ jobs:
     - name: Build Go program
       run: |
         go build -o CreateUser.exe CreateUser.go
-  
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: CreateUser-exe
+        path: CreateUser.exe

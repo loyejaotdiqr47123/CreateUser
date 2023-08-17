@@ -43,7 +43,7 @@ func NetUserAdd(servername *uint16, level uint32, buf *byte, parm_err *uint32) u
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Println("Usage: CreateUser.exe <username> <password>")
+		fmt.Println("用法: CreateUser.exe <username> <password>")
 		os.Exit(1)
 	}
 
@@ -60,14 +60,14 @@ func main() {
 
 	ret := NetUserAdd(nil, 1, (*byte)(unsafe.Pointer(&ui1)), nil)
 	if ret == NERR_Success {
-		fmt.Println("User created successfully.")
+		fmt.Println("用户建新成功.")
 	} else if ret == ERROR_ACCESS_DENIED {
-		fmt.Println("Access denied. Run the program with administrative privileges.")
+		fmt.Println("拒绝访问，请以管理员权限执行")
 	} else if ret == ERROR_ALREADY_EXISTS {
-		fmt.Println("User already exists.")
+		fmt.Println("用户已存在.")
 	} else if ret == ERROR_INVALID_PARAMETER {
-		fmt.Println("Invalid parameter.")
+		fmt.Println("无效参数.")
 	} else {
-		fmt.Printf("Error code: %d\n", ret)
+		fmt.Printf("错误代码: %d\n", ret)
 	}
 }

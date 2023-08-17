@@ -26,7 +26,7 @@ jobs:
     - name: Build DLL
       run: |
         cd build
-        g++ -shared -o CreateUserDLL.dll -Wl,--out-implib,libCreateUserDLL.a CreateUserDLL.cpp -lnetapi32
+        g++ -shared -o CreateUserDLL.dll CreateUserDLL.cpp -lnetapi32
 
     - name: Upload DLL artifact
       uses: actions/upload-artifact@v2

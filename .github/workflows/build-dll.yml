@@ -1,4 +1,4 @@
-name: Build DLL
+name: Build C++ Program
 
 on:
   push:
@@ -7,29 +7,20 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install MinGW-w64
-      run: |
-        # Download and install MinGW-w64
-        choco install mingw-w64 -y
+    - name: Install g++
+      run: sudo apt-get install g++
 
-    - name: Set up environment variables
-      run: |
-        # Set up environment variables for MinGW-w64
-        echo "##vso[task.prependpath]C:\ProgramData\chocolatey\lib\mingw-w64\tools\install\mingw64\bin"
+    - name: Build
+      run: g++ -o CreateUser.exe CreateUser.cpp -lnetapi32
 
-    - name: Build DLL
-      run: |
-        cd build
-        g++ -shared -o CreateUserDLL.dll CreateUserDLL.cpp -lnetapi32
-
-    - name: Upload DLL artifact
+    - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: CreateUserDLL
-        path: build/CreateUserDLL.dll
+        name: CompiledExecutable
+        path: CreateUser.exe

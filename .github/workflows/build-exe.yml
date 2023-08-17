@@ -1,30 +1,29 @@
-name: Build Python Executable
+name: Build Go Application
 
-on: [push]
+on:
+  push:
+    branches:
+      - main  # 这里的分支名可以根据你的项目设置进行更改
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Build
+    runs-on: ubuntu-latest  # 使用最新版的 Ubuntu
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2  # 获取你的仓库代码
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.x
+      - name: Set up Go
+        uses: actions/setup-go@v2  # 设置 Go 环境
+        with:
+          go-version: 1.x  # 或者你想要的 Go 版本
 
-    - name: Install Nuitka
-      run: |
-        pip install nuitka
+      - name: Cross-compile for Windows
+        run: GOOS=windows GOARCH=amd64 go build -o CreateUser.exe  # 交叉编译生成 Windows 可执行文件 myapp.exe
 
-    - name: Build executable
-      run: |
-        nuitka --standalone --output-dir dist CreateUser.py
-
-    - name: Upload executable
-      uses: actions/upload-artifact@v2
-      with:
-        name: executable
-        path: dist/
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2  # 上传生成的可执行文件
+        with:
+          name: myapp
+          path: ./CreateUser.exe

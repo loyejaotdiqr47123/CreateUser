@@ -13,14 +13,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install Visual Studio Build Tools
-      run: choco install visualstudio2019buildtools --package-parameters "--includeRecommended --includeOptional" -y
+    - name: Setup MSVC
+      uses: microsoft/setup-msbuild@v1.0.2
 
     - name: Build
-      run: cl.exe /EHsc /Fe:CreateUser.exe CreateUser.cpp netapi32.lib
+      run: msbuild /p:Configuration=Release CreateUser.cpp
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
         name: CompiledExecutable
-        path: CreateUser.exe
+        path: bin/Release/CreateUser.exe

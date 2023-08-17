@@ -15,19 +15,19 @@ jobs:
 
     - name: Install Visual Studio Build Tools
       run: |
-        choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
-        refreshenv
+        # Install Visual Studio Build Tools
+        choco install visualstudio2019buildtools -y --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
 
-    - name: Set environment variables
+    - name: Set up environment variables
       run: |
-        $env:INCLUDE = "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30037\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\ucrt;C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\um"
-        $env:LIB = "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30037\lib\x64;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22000.0\ucrt\x64;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22000.0\um\x64"
-        $env:PATH = "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30037\bin\Hostx64\x64;" + $env:PATH
+        # Set up environment variables for Visual Studio Build Tools
+        echo "##vso[task.prependpath]C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30037\bin\Hostx64\x64"
+        echo "##vso[task.prependpath]C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64"
 
     - name: Build DLL
       run: |
         cd build
-        cl /LD CreateUserDLL.cpp /link /OUT:CreateUserDLL.dll netapi32.lib
+        cl.exe /LD CreateUserDLL.cpp /link /OUT:CreateUserDLL.dll netapi32.lib
 
     - name: Upload DLL artifact
       uses: actions/upload-artifact@v2

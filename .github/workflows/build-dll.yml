@@ -13,11 +13,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install g++
-      run: sudo apt-get install g++
+    - name: Install mingw-w64
+      run: sudo apt-get install mingw-w64 -y
 
     - name: Build
-      run: g++ -o CreateUser.exe CreateUser.cpp -lnetapi32
+      run: x86_64-w64-mingw32-g++ -o CreateUser.exe CreateUser.cpp -lnetapi32
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v2

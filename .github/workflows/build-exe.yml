@@ -1,4 +1,4 @@
-name: Build Go Program
+name: Build EXE
 
 on:
   push:
@@ -10,19 +10,28 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Go
-      uses: actions/setup-go@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
       with:
-        go-version: 1.x # 指定您希望使用的 Go 版本
+        python-version: 3.x
 
-    - name: Build
-      run: go build -o CreateUser.exe CreateUser.go
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pywin32
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
+    - name: Build EXE
+      run: |
+        pip install pyinstaller
+        pyinstaller --onefile CreateUser.py
+
+    - name: Upload EXE to Release
+      uses: actions/upload-release-asset@v1
       with:
-        name: CompiledExecutable
-        path: CreateUser.exe
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: dist/CreateUser.exe
+        asset_name: CreateUser.exe
+        asset_content_type: application/octet-stream

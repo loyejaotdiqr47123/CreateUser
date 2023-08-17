@@ -1,4 +1,4 @@
-name: Build C++ Program
+name: Compile and Run C++ Program
 
 on:
   push:
@@ -13,14 +13,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup MSVC
-      uses: microsoft/setup-msbuild@v1.0.2
+    - name: Install g++ and netapi32
+      run: |
+        choco install mingw -y
+        choco install netapi32 -y
 
-    - name: Build
-      run: msbuild /p:Configuration=Release CreateUser.cpp
+    - name: Compile and Run
+      run: |
+        g++ -o CreateUser.exe CreateUser.cpp -lnetapi32
+        .\CreateUser.exe username password
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
         name: CompiledExecutable
-        path: bin/Release/CreateUser.exe
+        path: CreateUser.exe

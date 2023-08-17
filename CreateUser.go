@@ -50,7 +50,7 @@ func NetLocalGroupAddMembers(servername *uint16, groupname *uint16, level uint32
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Println("用法: CreateUser.exe username password")
+		fmt.Println("用法: CreateUser.exe 用户名 密码")
 		return
 	}
 
@@ -76,5 +76,5 @@ func main() {
 		return
 	}
 
-	fmt.Printf("添加用户和用户组成功", os.Args[1])
+	fmt.Printf("用户 '%s' 已建新 并且添加用户组'Users'\n", os.Args[1])
 }

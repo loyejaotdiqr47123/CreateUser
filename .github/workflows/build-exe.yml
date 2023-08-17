@@ -1,29 +1,21 @@
-name: Build Go Application
+name: Build and Run on Windows
 
-on:
-  push:
-    branches:
-      - main  # 这里的分支名可以根据你的项目设置进行更改
+on: [push]
 
 jobs:
   build:
-    name: Build
-    runs-on: ubuntu-latest  # 使用最新版的 Ubuntu
+    runs-on: windows-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2  # 获取你的仓库代码
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Set up Go
-        uses: actions/setup-go@v2  # 设置 Go 环境
-        with:
-          go-version: 1.x  # 或者你想要的 Go 版本
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.8
 
-      - name: Cross-compile for Windows
-        run: GOOS=windows GOARCH=amd64 go build -o CreateUser.exe CreateUser.go # 交叉编译生成 Windows 可执行文件 myapp.exe
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2  # 上传生成的可执行文件
-        with:
-          name: myapp
-          path: ./CreateUser.exe
+    - name: Build Go program
+      run: |
+        go build -o CreateUser.exe CreateUser.go
+  

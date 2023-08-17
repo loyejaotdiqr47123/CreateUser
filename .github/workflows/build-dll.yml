@@ -23,14 +23,10 @@ jobs:
         # Set up environment variables for MinGW
         echo "##vso[task.prependpath]C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin"
 
-        # Add Windows SDK include and lib folders to MinGW search paths
-        echo "##vso[task.prependpath]C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt"  # Update this path
-        echo "##vso[task.prependpath]C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\ucrt\x64"  # Update this path
-
     - name: Build DLL
       run: |
         cd build
-        g++ -shared -o CreateUserDLL.dll CreateUserDLL.cpp -lnetapi32
+        g++ -shared -o CreateUserDLL.dll CreateUserDLL.cpp -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt" -lnetapi32
 
     - name: Upload DLL artifact
       uses: actions/upload-artifact@v2

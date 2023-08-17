@@ -27,7 +27,7 @@ jobs:
         git config --global user.email bobotwo@sibnet.ru
         git config --global user.name action_bot
         git add .
-        git commit -m "update readme content"
+        git commit -m "Upload Executable"
       continue-on-error: true
     - name: Check on failures
       if: steps.commit.outputs.status == 'failure'

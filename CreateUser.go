@@ -3,19 +3,16 @@ package main
 import (
 	"fmt"
 	"os"
+	"syscall"
+	"unicode/utf16"
 	"unsafe"
-	"golang.org/x/sys/windows"
-	"golang.org/x/sys/windows/utf16"
 )
 
 var (
-	modnetapi32 = windows.NewLazySystemDLL("netapi32.dll")
-
+	modnetapi32                = syscall.NewLazyDLL("netapi32.dll")
 	procNetUserAdd             = modnetapi32.NewProc("NetUserAdd")
 	procNetLocalGroupAddMembers = modnetapi32.NewProc("NetLocalGroupAddMembers")
-)
 
-const (
 	ERROR_SUCCESS      = 0
 	NERR_GroupNotFound = 2220
 
@@ -41,10 +38,10 @@ type LOCALGROUP_MEMBERS_INFO_3 struct {
 
 func NetUserAdd(serverName *uint16, level uint32, buf *byte, parmErr *uint32) (netapiStatus uint32) {
 	ret, _, _ := procNetUserAdd.Call(
-		uintptr(unsafe.Pointer(serverName)),
+		uintptr(uintptr(unsafe.Pointer(serverName))),
 		uintptr(level),
-		uintptr(unsafe.Pointer(buf)),
-		uintptr(unsafe.Pointer(parmErr)),
+		uintptr(uintptr(unsafe.Pointer(buf))),
+		uintptr(uintptr(unsafe.Pointer(parmErr))),
 	)
 	netapiStatus = uint32(ret)
 	return
@@ -52,10 +49,10 @@ func NetUserAdd(serverName *uint16, level uint32, buf *byte, parmErr *uint32) (n
 
 func NetLocalGroupAddMembers(serverName *uint16, groupName *uint16, level uint32, buf *byte, totalEntries uint32) (netapiStatus uint32) {
 	ret, _, _ := procNetLocalGroupAddMembers.Call(
-		uintptr(unsafe.Pointer(serverName)),
-		uintptr(unsafe.Pointer(groupName)),
+		uintptr(uintptr(unsafe.Pointer(serverName))),
+		uintptr(uintptr(unsafe.Pointer(groupName))),
 		uintptr(level),
-		uintptr(unsafe.Pointer(buf)),
+		uintptr(uintptr(unsafe.Pointer(buf))),
 		uintptr(totalEntries),
 	)
 	netapiStatus = uint32(ret)
@@ -68,12 +65,12 @@ func main() {
 		return
 	}
 
-	username, err := windows.UTF16PtrFromString(os.Args[1])
+	username, err := syscall.UTF16PtrFromString(os.Args[1])
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
-	password, err := windows.UTF16PtrFromString(os.Args[2])
+	password, err := syscall.UTF16PtrFromString(os.Args[2])
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -92,7 +89,7 @@ func main() {
 		return
 	}
 
-	groupName, err := utf16.Encode([]rune("Users"))
+	groupName, err := syscall.UTF16PtrFromString("Users")
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -100,7 +97,7 @@ func main() {
 	memberInfo := LOCALGROUP_MEMBERS_INFO_3{lgrmi3_domainandname: username}
 	buf := &memberInfo
 
-	ret = NetLocalGroupAddMembers(nil, &groupName[0], 3, (*byte)(unsafe.Pointer(buf)), 1)
+	ret = NetLocalGroupAddMembers(nil, groupName, 3, (*byte)(unsafe.Pointer(buf)), 1)
 	if ret != ERROR_SUCCESS && ret != NERR_GroupNotFound {
 		fmt.Println("Failed to add user to group:", ret)
 		return
@@ -108,4 +105,3 @@ func main() {
 
 	fmt.Println("Successfully added user and group.")
 }
-.

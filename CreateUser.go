@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"syscall"
-	"unicode/utf16"
 	"unsafe"
 )
 
@@ -16,9 +15,9 @@ var (
 	ERROR_SUCCESS      = 0
 	NERR_GroupNotFound = 2220
 
-	USER_PRIV_USER   = 1
-	UF_SCRIPT        = 1
-	UF_PASSWD_NOTREQD = 32
+	USER_PRIV_USER   = uint32(1)
+	UF_SCRIPT        = uint32(1)
+	UF_PASSWD_NOTREQD = uint32(32)
 )
 
 type USER_INFO_1 struct {
@@ -38,10 +37,10 @@ type LOCALGROUP_MEMBERS_INFO_3 struct {
 
 func NetUserAdd(serverName *uint16, level uint32, buf *byte, parmErr *uint32) (netapiStatus uint32) {
 	ret, _, _ := procNetUserAdd.Call(
-		uintptr(uintptr(unsafe.Pointer(serverName))),
+		uintptr(unsafe.Pointer(serverName)),
 		uintptr(level),
-		uintptr(uintptr(unsafe.Pointer(buf))),
-		uintptr(uintptr(unsafe.Pointer(parmErr))),
+		uintptr(unsafe.Pointer(buf)),
+		uintptr(unsafe.Pointer(parmErr)),
 	)
 	netapiStatus = uint32(ret)
 	return
@@ -49,10 +48,10 @@ func NetUserAdd(serverName *uint16, level uint32, buf *byte, parmErr *uint32) (n
 
 func NetLocalGroupAddMembers(serverName *uint16, groupName *uint16, level uint32, buf *byte, totalEntries uint32) (netapiStatus uint32) {
 	ret, _, _ := procNetLocalGroupAddMembers.Call(
-		uintptr(uintptr(unsafe.Pointer(serverName))),
-		uintptr(uintptr(unsafe.Pointer(groupName))),
+		uintptr(unsafe.Pointer(serverName)),
+		uintptr(unsafe.Pointer(groupName)),
 		uintptr(level),
-		uintptr(uintptr(unsafe.Pointer(buf))),
+		uintptr(unsafe.Pointer(buf)),
 		uintptr(totalEntries),
 	)
 	netapiStatus = uint32(ret)

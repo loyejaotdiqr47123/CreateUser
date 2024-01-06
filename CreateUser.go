@@ -3,12 +3,13 @@ package main
 import (
 	"fmt"
 	"os"
-	"syscall"
 	"unsafe"
+	"golang.org/x/sys/windows"
+	"golang.org/x/sys/windows/utf16"
 )
 
 var (
-	modnetapi32 = syscall.NewLazyDLL("netapi32.dll")
+	modnetapi32 = windows.NewLazySystemDLL("netapi32.dll")
 
 	procNetUserAdd             = modnetapi32.NewProc("NetUserAdd")
 	procNetLocalGroupAddMembers = modnetapi32.NewProc("NetLocalGroupAddMembers")
@@ -63,12 +64,20 @@ func NetLocalGroupAddMembers(serverName *uint16, groupName *uint16, level uint32
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Println("用法: CreateUser.exe 用户名 密码")
+		fmt.Println("Usage: CreateUser.exe <username> <password>")
 		return
 	}
 
-	username := syscall.StringToUTF16Ptr(os.Args[1])
-	password := syscall.StringToUTF16Ptr(os.Args[2])
+	username, err := windows.UTF16PtrFromString(os.Args[1])
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	password, err := windows.UTF16PtrFromString(os.Args[2])
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
 
 	ui1 := USER_INFO_1{
 		Username: username,
@@ -79,19 +88,24 @@ func main() {
 
 	ret := NetUserAdd(nil, 1, (*byte)(unsafe.Pointer(&ui1)), nil)
 	if ret != ERROR_SUCCESS {
-		fmt.Println("添加用户错误:", ret)
+		fmt.Println("Failed to add user:", ret)
 		return
 	}
 
-	groupName := syscall.StringToUTF16Ptr("Users")
+	groupName, err := utf16.Encode([]rune("Users"))
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
 	memberInfo := LOCALGROUP_MEMBERS_INFO_3{lgrmi3_domainandname: username}
 	buf := &memberInfo
 
-	ret = NetLocalGroupAddMembers(nil, groupName, 3, (*byte)(unsafe.Pointer(buf)), 1)
+	ret = NetLocalGroupAddMembers(nil, &groupName[0], 3, (*byte)(unsafe.Pointer(buf)), 1)
 	if ret != ERROR_SUCCESS && ret != NERR_GroupNotFound {
-		fmt.Println("添加用户到组失败:", ret)
+		fmt.Println("Failed to add user to group:", ret)
 		return
 	}
 
-	fmt.Println("添加用户和组成功.")
+	fmt.Println("Successfully added user and group.")
 }
+.

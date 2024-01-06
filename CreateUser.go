@@ -12,8 +12,8 @@ var (
 	procNetUserAdd             = modnetapi32.NewProc("NetUserAdd")
 	procNetLocalGroupAddMembers = modnetapi32.NewProc("NetLocalGroupAddMembers")
 
-	ERROR_SUCCESS      = 0
-	NERR_GroupNotFound = 2220
+	ERROR_SUCCESS      = uint32(0)
+	NERR_GroupNotFound = uint32(2220)
 
 	USER_PRIV_USER   = uint32(1)
 	UF_SCRIPT        = uint32(1)

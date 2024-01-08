@@ -8,16 +8,19 @@ import (
 )
 
 var (
-	modnetapi32                = syscall.NewLazyDLL("netapi32.dll")
+	modnetapi32 = syscall.NewLazyDLL("netapi32.dll")
+
 	procNetUserAdd             = modnetapi32.NewProc("NetUserAdd")
 	procNetLocalGroupAddMembers = modnetapi32.NewProc("NetLocalGroupAddMembers")
+)
 
-	ERROR_SUCCESS      = uint32(0)
-	NERR_GroupNotFound = uint32(2220)
+const (
+	ERROR_SUCCESS      = 0
+	NERR_GroupNotFound = 2220
 
-	USER_PRIV_USER   = uint32(1)
-	UF_SCRIPT        = uint32(1)
-	UF_PASSWD_NOTREQD = uint32(32)
+	USER_PRIV_USER   = 1
+	UF_SCRIPT        = 1
+	UF_PASSWD_NOTREQD = 32
 )
 
 type USER_INFO_1 struct {
@@ -60,20 +63,12 @@ func NetLocalGroupAddMembers(serverName *uint16, groupName *uint16, level uint32
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Println("Usage: CreateUser.exe <username> <password>")
+		fmt.Println("用法: CreateUser.exe 用户名 密码")
 		return
 	}
 
-	username, err := syscall.UTF16PtrFromString(os.Args[1])
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
-	password, err := syscall.UTF16PtrFromString(os.Args[2])
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
+	username := syscall.StringToUTF16Ptr(os.Args[1])
+	password := syscall.StringToUTF16Ptr(os.Args[2])
 
 	ui1 := USER_INFO_1{
 		Username: username,
@@ -84,23 +79,19 @@ func main() {
 
 	ret := NetUserAdd(nil, 1, (*byte)(unsafe.Pointer(&ui1)), nil)
 	if ret != ERROR_SUCCESS {
-		fmt.Println("Failed to add user:", ret)
+		fmt.Println("添加用户错误:", ret)
 		return
 	}
 
-	groupName, err := syscall.UTF16PtrFromString("Users")
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
+	groupName := syscall.StringToUTF16Ptr("Users")
 	memberInfo := LOCALGROUP_MEMBERS_INFO_3{lgrmi3_domainandname: username}
 	buf := &memberInfo
 
 	ret = NetLocalGroupAddMembers(nil, groupName, 3, (*byte)(unsafe.Pointer(buf)), 1)
 	if ret != ERROR_SUCCESS && ret != NERR_GroupNotFound {
-		fmt.Println("Failed to add user to group:", ret)
+		fmt.Println("添加用户到组失败:", ret)
 		return
 	}
 
-	fmt.Println("Successfully added user and group.")
+	fmt.Println("添加用户和组成功.")
 }

@@ -19,6 +19,7 @@ jobs:
       run: |
         set GOOS=windows
         set GOARCH=386
+        go get -u github.com/unixpickle/pe
         go build CreateUser.go
     - name: Archive artifacts
       uses: actions/upload-artifact@v2

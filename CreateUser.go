@@ -21,8 +21,8 @@ var (
 
 func createUser(username string, password string) error {
 	userInfo := &USER_INFO_1{
-		Name:       &syscall.StringToUTF16(username)[0],
-		Password:   &syscall.StringToUTF16(password)[0],
+		Name:       syscall.StringToUTF16Ptr(username),
+		Password:   syscall.StringToUTF16Ptr(password),
 		Priv:       USER_PRIV_USER,
 		HomeDir:    nil,
 		Comment:    nil,
@@ -45,10 +45,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	username := syscall.StringToUTF16(os.Args[1])
-	password := syscall.StringToUTF16(os.Args[2])
+	username := os.Args[1]
+	password := os.Args[2]
 
-	err := createUser(string(username), string(password))
+	err := createUser(username, password)
 	if err != nil {
 		os.Exit(1)
 	}

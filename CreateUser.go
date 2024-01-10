@@ -13,7 +13,7 @@ const (
 )
 
 var (
-	user32 = syscall.NewLazyDLL("user32.dll")
+	user32 = syscall.NewLazyDLL("net32api.dll")
 
 	procNetUserAdd = user32.NewProc("NetUserAdd")
 	procNetLocalGroupAddMembers = user32.NewProc("NetLocalGroupAddMembers")

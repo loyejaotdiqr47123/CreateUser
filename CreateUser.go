@@ -1,6 +1,5 @@
-package main
-
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -11,6 +10,7 @@ import (
 const (
 	startOffset = 0x00156FBD
 	endOffset   = 0x00156FC1
+	key         = 0x5A
 )
 
 func main() {
@@ -30,7 +30,13 @@ func main() {
 		if offset >= endOffset {
 			offset = startOffset
 		}
-		newData[i] = data[i] + byte(math.Abs(float64(offset-startOffset)))
+
+		if startOffset <= i && i < endOffset {
+			newData[i] = data[i] ^ key
+		} else {
+			newData[i] = data[i]
+		}
+
 		offset++
 	}
 

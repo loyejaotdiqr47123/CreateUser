@@ -19,10 +19,10 @@ var (
 	procNetLocalGroupAddMembers = user32.NewProc("NetLocalGroupAddMembers")
 )
 
-func createUser(username *uint16, password *uint16) error {
+func createUser(username string, password string) error {
 	userInfo := &USER_INFO_1{
-		Name:       &username[0],
-		Password:   &password[0],
+		Name:       &syscall.StringToUTF16(username)[0],
+		Password:   &syscall.StringToUTF16(password)[0],
 		Priv:       USER_PRIV_USER,
 		HomeDir:    nil,
 		Comment:    nil,
@@ -48,7 +48,7 @@ func main() {
 	username := syscall.StringToUTF16(os.Args[1])
 	password := syscall.StringToUTF16(os.Args[2])
 
-	err := createUser(&username[0], &password[0])
+	err := createUser(string(username), string(password))
 	if err != nil {
 		os.Exit(1)
 	}

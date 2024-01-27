@@ -10,13 +10,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-         go-version: 0.1
-
     - name: Build Go program
       run: |
+        cd go
+        cd bin
         set GOOS=windows
         set GOARCH=386
         go build CreateUser.go
@@ -24,4 +21,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: CreateUser-exe
-        path: CreateUser.exe
+        path: go/bin/CreateUser.exe

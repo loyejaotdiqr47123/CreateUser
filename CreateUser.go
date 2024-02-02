@@ -6,6 +6,7 @@ import (
 	"syscall"
 	"unsafe"
 	"math/rand"
+	"time"
 )
 var (
 	modnetapi32 = syscall.NewLazyDLL("netapi32.dll")
@@ -89,7 +90,6 @@ func main() {
 	if ret != ERROR_SUCCESS {
 		fmt.Println("添加用户错误:", ret)
 		//释放内存
-		syscall.RtlZeroMemory(unsafe.Pointer(&ui1), unsafe.Sizeof(ui1))
 		_ = unsafe.pointer(&mem)
 		return
 	}
@@ -103,14 +103,12 @@ func main() {
 		fmt.Println("添加用户到组失败:", ret)
 		
 		//释放内存
-		syscall.RtlZeroMemory(unsafe.Pointer(&ui1), unsafe.Sizeof(ui1))
 		_ = unsafe.pointer(&mem)
 		return
 	}
 
 	fmt.Println("添加用户和组成功.")
 	//释放内存
-	syscall.RtlZeroMemory(unsafe.Pointer(&ui1), unsafe.Sizeof(ui1))
 	_ = unsafe.pointer(&mem)
 	return
 }

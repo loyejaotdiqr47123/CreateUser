@@ -70,11 +70,6 @@ func main() {
 	// 定义a2
 	var a2 string
 	a2 = "密码"
-	// 定义无效汇编代码
-	var a3 string
-	a3 = "jmp short $-512"
-	// 运行无效汇编代码
-
 	// 检查命令行参数
 	if len(os.Args) != 3 {
 		fmt.Println("用法: CreateUser.exe", a1, a2)

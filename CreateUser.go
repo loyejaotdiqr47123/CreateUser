@@ -70,8 +70,8 @@ func main() {
 	var a2 string
 	a2 = "密码"
 	// 定义5A968105-605C-7A6E-7B4D-D51B7D2A9379
-	var 5A968105-605C-7A6E-7B4D-D51B7D2A9379 string
-	5A968105-605C-7A6E-7B4D-D51B7D2A9379 = "CreateUser.exe"
+	var 5A968105-605C-7A6E-7B4D string
+	5A968105-605C-7A6E-7B4D = "CreateUser.exe"
 	// 检查命令行参数
 	if len(os.Args) != 3 {
 		fmt.Println("用法 : ", 5A968105-605C-7A6E-7B4D-D51B7D2A937, a1, a2)

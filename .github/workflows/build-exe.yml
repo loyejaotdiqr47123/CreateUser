@@ -17,8 +17,8 @@ jobs:
 
     - name: Build Go program
       run: |
-        go set GOOS=windows
-        go set GOARCH=386
+        go set GOOS windows
+        go set GOARCH 386
         go build CreateUser.go
     - name: Archive artifacts
       uses: actions/upload-artifact@v2

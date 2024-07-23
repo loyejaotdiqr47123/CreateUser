@@ -22,7 +22,7 @@ jobs:
       run: go build CreateUser.go
 
     - name: Archive artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: CreateUser-exe
         path: CreateUser.exe

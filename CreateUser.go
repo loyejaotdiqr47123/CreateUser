@@ -74,7 +74,7 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 	
 	if len(os.Args) != 3 {
-		fmt.Println(deobfuscateString("55So5oi3IDogQ3JlYXRlVXNlci5leGUg55So5oi35ZCNIOS4reWtlw=="))
+		fmt.Println(deobfuscateString("55So5rOVIDogQ3JlYXRlVXNlci5leGUg55So5oi35ZCNIOWvhueggQ=="))
 		return
 	}
 
